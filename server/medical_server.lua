@@ -823,7 +823,7 @@ AddEventHandler('QC-AdvancedMedic:server:UseDoctorBagTool', function(toolAction,
             Medic.Functions.AddItem(itemName, 1)
             TriggerClientEvent('QC-AdvancedMedic:client:ToolUsageResult', src, {
                 success = false,
-                message = 'Patient not found'
+                message = 'Pasient ikke funnet'
             })
             return
         end
@@ -907,7 +907,7 @@ AddEventHandler('QC-AdvancedMedic:server:UseDoctorBagTool', function(toolAction,
         end
         TriggerClientEvent('QC-AdvancedMedic:client:ToolUsageResult', src, {
             success = false,
-            message = 'Patient not found'
+            message = 'Pasient ikke funnet'
         })
         return
     end

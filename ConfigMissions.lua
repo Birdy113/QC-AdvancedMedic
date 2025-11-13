@@ -16,7 +16,7 @@ ConfigMissions = {}
 -- - 'intermediate': Multi-step field treatment with multiple procedures
 -- - 'surgery': Advanced cases requiring transport to medical station for surgery
 --=========================================================
-ConfigMissions.BandageItem = 'fieldbandage'
+ConfigMissions.BandageItem = 'cloth_band'
 --=========================================================
 -- Mission Locations - Job-Specific Areas
 --=========================================================

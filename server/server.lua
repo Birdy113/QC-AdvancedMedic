@@ -82,6 +82,7 @@ RSGCore.Commands.Add('revive', locale('sv_revive'), {{name = 'id', help = locale
 
     if not args[1] then
         TriggerClientEvent('QC-AdvancedMedic:client:playerRevive', src)
+        TriggerClientEvent('QC-AdvancedMedic:client:ClearAllWounds', src)
         return
     end
 
@@ -90,8 +91,10 @@ RSGCore.Commands.Add('revive', locale('sv_revive'), {{name = 'id', help = locale
         TriggerClientEvent('ox_lib:notify', src, {title = locale('sv_no_online'), type = 'error', duration = 7000 })
         return
     end
-
+    TriggerEvent('hud:client:UpdateNeeds', 100, 100, 100)
+    TriggerEvent('hud:client:UpdateStress', 0)
     TriggerClientEvent('QC-AdvancedMedic:client:adminRevive', Player.PlayerData.source)
+    TriggerClientEvent('QC-AdvancedMedic:client:ClearAllWounds', Player.PlayerData.source)
 end, 'admin')
 
 -- Admin Clear Wounds
@@ -526,7 +529,7 @@ AddEventHandler('QC-AdvancedMedic:server:PurchasePharmaceutical', function(data)
     end
     
     -- Check if player has inventory space
-    local hasSpace = Player.Functions.AddItem(data.item, data.quantity, false, nil, true) -- dry run
+    local hasSpace = Player.Functions.AddItem(data.item, data.quantity, false, false, nil) -- dry run
     if not hasSpace then
         TriggerClientEvent('ox_lib:notify', src, {
             title = 'Inventory Full',

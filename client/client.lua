@@ -119,7 +119,7 @@ local deathTimer = function()
     SendNUIMessage({
         type = 'show-death-screen',
         data = {
-            message = medicsonduty > 0 and "Medical assistance is available" or "No medics on duty",
+            message = medicsonduty > 0 and "Medisinsk hjelp er tilgjengelig" or "Ingen leger på vakt",
             seconds = Config.DeathTimer,
             canRespawn = false,
             medicsOnDuty = medicsonduty or 0
@@ -381,7 +381,7 @@ local function UpdateMedicPrompts()
         
         -- Only create prompt if player has the correct job for this location
         if playerJob == loc.job then
-            local prompt = exports['rsg-core']:createPrompt(loc.prompt, loc.coords, RSGCore.Shared.Keybinds['J'], locale('cl_open') .. loc.name,
+            local prompt = exports['rsg-core']:createPrompt(loc.prompt, loc.coords, RSGCore.Shared.Keybinds['ENTER'], locale('cl_open') .. loc.name,
             {
                 type = 'client',
                 event = 'QC-AdvancedMedic:client:mainmenu',
@@ -734,10 +734,10 @@ end
 
 AddEventHandler('QC-AdvancedMedic:client:OpenMedicSupplies', function()
     if not CanAccessLocation(mediclocation) then 
-        lib.notify({ title = 'Access Denied', description = 'You do not have access to this medical facility', type = 'error', duration = 5000 })
+        lib.notify({ title = 'Tilgang nektet', description = 'Du har ikke tilgang til dette medisinske anlegget', type = 'error', duration = 5000 })
         return 
     end
-    TriggerServerEvent('rsg-shops:server:openstore', 'medic', 'medic', locale('cl_medical_supplies'))
+    TriggerServerEvent('rsg-shops:server:openstore', 'medisin', 'medisin', locale('cl_medical_supplies'))
 end)
 
 ---------------------------------------------------------------------
@@ -750,12 +750,12 @@ AddEventHandler('QC-AdvancedMedic:client:OpenPharmaceuticalShop', function()
     local isBoss = PlayerData.job.grade.isboss
     
     if not CanAccessLocation(mediclocation) then 
-        lib.notify({ title = 'Access Denied', description = 'You do not have access to this medical facility', type = 'error', duration = 5000 })
+        lib.notify({ title = 'Access Denied', description = 'Du har ikke tilgang til dette medisinske anlegget', type = 'error', duration = 5000 })
         return 
     end
     
     if grade < 2 and not isBoss then
-        lib.notify({ title = 'Access Denied', description = 'Only Pharmacists and above can access pharmaceutical supplies', type = 'error', duration = 5000 })
+        lib.notify({ title = 'Access Denied', description = 'Bare farmasøyter og over kan få tilgang til farmasøytiske forsyninger', type = 'error', duration = 5000 })
         return
     end
     
@@ -764,8 +764,8 @@ AddEventHandler('QC-AdvancedMedic:client:OpenPharmaceuticalShop', function()
     
     -- Add header
     table.insert(pharmaceuticalOptions, {
-        title = "🏥 1890s Pharmaceutical Dispensary",
-        description = "Medical compounds and experimental treatments",
+        title = "🏥 1890s Farmasøytisk apotek",
+        description = "Medisinske forbindelser og eksperimentelle behandlinger",
         readOnly = true,
         icon = 'fa-solid fa-mortar-pestle'
     })
@@ -806,7 +806,7 @@ AddEventHandler('QC-AdvancedMedic:client:OpenPharmaceuticalShop', function()
     
     -- Back option
     table.insert(pharmaceuticalOptions, {
-        title = "Back to Main Menu",
+        title = "Tilbake til hovedmenyen",
         icon = 'fa-solid fa-arrow-left',
         event = 'QC-AdvancedMedic:client:medicmenu',
         args = { location = mediclocation }
@@ -814,7 +814,7 @@ AddEventHandler('QC-AdvancedMedic:client:OpenPharmaceuticalShop', function()
     
     lib.registerContext({
         id = "pharmaceutical_shop",
-        title = "Pharmaceutical Dispensary",
+        title = "Farmasøytisk apotek",
         options = pharmaceuticalOptions
     })
     lib.showContext("pharmaceutical_shop")
@@ -823,7 +823,7 @@ end)
 -- Purchase pharmaceutical item
 AddEventHandler('QC-AdvancedMedic:client:PurchasePharmaceutical', function(data)
     local input = lib.inputDialog('Purchase ' .. data.label, {
-        {type = 'number', label = 'Quantity', description = 'How many do you want to buy?', default = 1, min = 1, max = 10}
+        {type = 'number', label = 'Mengde', description = 'Hvor mange vil du kjøpe?', default = 1, min = 1, max = 10}
     })
     
     if input and input[1] then
@@ -908,7 +908,8 @@ AddEventHandler('QC-AdvancedMedic:client:revive', function()
         Wait(1000)
 
         local respawnPos = Config.RespawnLocations[closestRespawn].coords
-        NetworkResurrectLocalPlayer(respawnPos, true, false)
+        local ped = PlayerPedId()
+        NetworkResurrectLocalPlayer(respawnPos.x,respawnPos.y,respawnPos.z, true, false)
         SetEntityInvincible(cache.ped, false)
         ClearPedBloodDamage(cache.ped)
         PlayPain(cache.ped, 4, 1, true, true)
@@ -917,6 +918,9 @@ AddEventHandler('QC-AdvancedMedic:client:revive', function()
         TriggerServerEvent("RSGCore:Server:SetMetaData", "hunger", 100)
         TriggerServerEvent("RSGCore:Server:SetMetaData", "thirst", 100)
         TriggerServerEvent("RSGCore:Server:SetMetaData", "cleanliness", 100)
+        TriggerEvent('hud:client:UpdateNeeds', 100, 100, 100)
+        TriggerEvent('hud:client:UpdateStress', 0)
+        TriggerEvent('QC-AdvancedMedic:client:ClearAllWounds')
         TriggerServerEvent('QC-AdvancedMedic:server:SetHealth', Config.MaxHealth)
 
         -- Reset Outlaw Status on respawn
@@ -969,6 +973,9 @@ RegisterNetEvent('QC-AdvancedMedic:client:adminRevive', function()
     TriggerServerEvent("RSGCore:Server:SetMetaData", "hunger", 100)
     TriggerServerEvent("RSGCore:Server:SetMetaData", "thirst", 100)
     TriggerServerEvent("RSGCore:Server:SetMetaData", "cleanliness", 100)
+    TriggerEvent('hud:client:UpdateNeeds', 100, 100, 100)
+    TriggerEvent('hud:client:UpdateStress', 0)
+    TriggerEvent('QC-AdvancedMedic:client:ClearAllWounds')
     -- NOTE: Wounds persist through self-revive - use /clearwounds command to clear them
 
     -- Reset Outlaw Status on respawn
@@ -1015,7 +1022,10 @@ RegisterNetEvent('QC-AdvancedMedic:client:playerRevive', function()
     TriggerServerEvent("RSGCore:Server:SetMetaData", "hunger", 100)
     TriggerServerEvent("RSGCore:Server:SetMetaData", "thirst", 100)
     TriggerServerEvent("RSGCore:Server:SetMetaData", "cleanliness", 100)
+    TriggerEvent('hud:client:UpdateNeeds', 100, 100, 100)
+    TriggerEvent('hud:client:UpdateStress', 0)
     TriggerServerEvent('QC-AdvancedMedic:server:SetHealth', Config.MaxHealth)
+    TriggerEvent('QC-AdvancedMedic:client:ClearAllWounds')
     -- NOTE: Wounds persist through admin/player revive - use /clearwounds command to clear them
     -- Reset Outlaw Status on respawn
     if Config.ResetOutlawStatus then
@@ -1050,8 +1060,11 @@ RegisterNetEvent('QC-AdvancedMedic:client:adminHeal', function()
     TriggerServerEvent("RSGCore:Server:SetMetaData", "hunger", 100)
     TriggerServerEvent("RSGCore:Server:SetMetaData", "thirst", 100)
     TriggerServerEvent("RSGCore:Server:SetMetaData", "cleanliness", 100)
+    TriggerEvent('hud:client:UpdateNeeds', 100, 100, 100)
+    TriggerEvent('hud:client:UpdateStress', 0)
     TriggerServerEvent('QC-AdvancedMedic:server:SetHealth', Config.MaxHealth)
     TriggerEvent('QC-AdvancedMedic:ResetLimbs')
+    TriggerEvent('QC-AdvancedMedic:client:ClearAllWounds')
     lib.notify({title = locale('cl_beenhealed'), duration = 5000, type = 'inform'})
 end)
 ---------------------------------------------------------------------
@@ -1075,8 +1088,11 @@ RegisterNetEvent('QC-AdvancedMedic:client:playerHeal', function()
     TriggerServerEvent("RSGCore:Server:SetMetaData", "hunger", 100)
     TriggerServerEvent("RSGCore:Server:SetMetaData", "thirst", 100)
     TriggerServerEvent("RSGCore:Server:SetMetaData", "cleanliness", 100)
+    TriggerEvent('hud:client:UpdateNeeds', 100, 100, 100)
+    TriggerEvent('hud:client:UpdateStress', 0)
     TriggerServerEvent('QC-AdvancedMedic:server:SetHealth', Config.MaxHealth)
     TriggerEvent('QC-AdvancedMedic:ResetLimbs')
+    TriggerEvent('QC-AdvancedMedic:client:ClearAllWounds')
     lib.notify({title = locale('cl_beenhealed'), duration = 5000, type = 'inform'})
 end)
 
@@ -1427,7 +1443,7 @@ RegisterNUICallback('disable-nui-focus', function(data, cb)
     
     lib.notify({
         title = 'NUI Focus',
-        description = 'Mouse disabled. Camera controls restored.',
+        description = 'Mus deaktivert. Kamerakontroller gjenopprettet.',
         type = 'inform',
         duration = 3000
     })

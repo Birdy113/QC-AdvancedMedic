@@ -16,17 +16,17 @@ Config = {}
 Config.Debug = false
 
 -- Language/Locale Settings  
-Config.Locale = 'en'
+Config.Locale = 'no'
 
 --=========================================================
 -- DEBUGGING CONFIGURATION
 --=========================================================
 Config.WoundSystem = {
     debugging = {
-        enabled = true,  -- Enable wound system debugging (set to false for production)
-        printDamageDetection = true,
-        printWoundCreation = true,
-        printBodyPartMapping = true
+        enabled = false,  -- Enable wound system debugging (set to false for production)
+        printDamageDetection = false,
+        printWoundCreation = false,
+        printBodyPartMapping = false
     }
 }
 
@@ -37,8 +37,8 @@ Config.WoundSystem = {
 -- Adjust MEDICAL_TICK_INTERVAL below to customize timing (in milliseconds)
 
 -- Core System Settings
-Config.MaxHealth = 600                          -- Maximum player health
-Config.DeathTimer = 300                         -- Death timer in seconds (5 minutes)
+Config.MaxHealth = 300                          -- Maximum player health
+Config.DeathTimer = 300                         -- Death timer in seconds (5 minutes 300)
 Config.UseScreenEffects = true                  -- Enable bleeding/injury screen effects
 
 -- Inventory Integration
@@ -62,9 +62,9 @@ Config.WipeBloodmoneyOnRespawn = false         -- Wipe blood money on death
 -- Config.JobRequired is no longer used - system uses Config.MedicJobLocations instead
 
 -- Medic Action Timings (in milliseconds)
-Config.MedicReviveTime = 8000                  -- Time for medic to revive player
+Config.MedicReviveTime = 10000                  -- Time for medic to revive player
 Config.MedicTreatTime = 6000                   -- Time for medic to treat wounds
-Config.BandageTime = 10000                     -- Time to apply bandage
+Config.BandageTime = 15000                     -- Time to apply bandage
 
 -- Medic System Settings
 Config.MedicCallDelay = 60                     -- Delay between medic calls (seconds)
@@ -86,7 +86,7 @@ Config.EnableScarSystem = true                -- Enable scar/past injury trackin
 
 -- Height-Based Fall Damage Configuration
 Config.FallDamage = {
-    minHeight = 3.0,                          -- Minimum height (meters) to cause injury
+    minHeight = 5.0,                          -- Minimum height (meters) to cause injury
     fractureHeight = 8.0,                     -- Non-ragdoll: fractures start here
     breakHeight = 15.0,                       -- Non-ragdoll: breaks start here
     ragdollFractureHeight = 6.0,              -- Ragdoll: fractures start here (lower)
@@ -138,13 +138,13 @@ Config.Bag = {
 
 Config.MedicBagCrafting = {
     {
-        category    = 'First Aid',
+        category    = 'Førstehjelp',
         crafttime   = 30000,
         craftingrep = 0,
         ingredients = {
             { item = 'apple', amount = 1 },
         },
-        receive     = 'cotton_band',
+        receive     = 'bandage',
         giveamount  = 1
     },
 }
@@ -153,23 +153,23 @@ Config.MedicBagCrafting = {
 -- Medic Job & Respawn Locations
 --=========================================================
 Config.Blip = {
-    Name   = 'Medic',
+    Name   = 'Doktor',
     Sprite = 'blip_shop_doctor',
     Scale  = 0.2
 }
 
 Config.MedicJobLocations = {
     { -- Valentine
-        name = 'Valentine Medic',
+        name = 'Valentine Legekontor',
         prompt = 'valmedic',
-        coords = vector3(-289.46, 806.82, 119.39 - 0.08),
+        coords = vector3(-289.8872, 816.2906, 119.3860 - 0.08),
         showblip = true,
         job = 'valmedic'
     },
     {
-        name = 'Saint Denis',
+        name = 'Saint Denis Sykehus',
         prompt = 'sdmedic',
-        coords = vector3(0.0, 0.0, 0.0 - 0.08),
+        coords = vector3(2721.28, -1230.74, 50.37),
         showblip = true,
         job = 'sdmedic'
     }
@@ -582,7 +582,7 @@ Config.Ballistics = {
 Config.BandageTypes = {
     -- Basic cloth bandage - Low quality frontier treatment
     ['cloth'] = {
-        label = 'Cloth Strip',
+        label = 'Tøystrimmel',
         itemName = 'cloth_band',     -- Actual item name in inventory (can be changed)
         decayRate = 3.0,                -- Minutes until bandage expires
         oneTimeHeal = 8,                -- Immediate health restored when applied
@@ -590,8 +590,8 @@ Config.BandageTypes = {
         description = 'Basic cloth strip - crude but available'
     },
     ['cotton'] = {
-        label = 'Cotton Bandage',
-        itemName = 'cotton_band',           -- Uses default RSG bandage item
+        label = 'Bomullsbandasje',
+        itemName = 'bandage',           -- Uses default RSG bandage item
         decayRate = 5.0,                -- Lasts 5 minutes before expiring
         oneTimeHeal = 12,               -- Decent immediate healing
         bleedingReduction = 4,          -- Reduces bleeding level by 4 points (minimum 1 remains)
@@ -606,7 +606,7 @@ Config.BandageTypes = {
         description = 'Quality linen wrap - superior absorbency and durability'
     },
     ['sterile'] = {
-        label = 'Sterilized Gauze',
+        label = 'Sterilisert gasbind',
         itemName = 'sterile_band',   -- Medical grade bandage item
         decayRate = 12.0,               -- Lasts 12 minutes before expiring
         oneTimeHeal = 25,               -- Excellent healing
@@ -621,7 +621,7 @@ Config.BandageTypes = {
 
 Config.TourniquetTypes = {
     ['rope'] = {
-        label = 'Rope Tourniquet',
+        label = 'Tau Tourniquet',
         itemName = 'tourniquet_rope',    -- Actual item name in inventory
         effectiveness = 70,
         maxDuration = 1200,          -- 20 minutes max (rough material causes damage)
@@ -632,7 +632,7 @@ Config.TourniquetTypes = {
         description = 'Improvised rope tourniquet - rough but effective'
     },
     ['leather'] = {
-        label = 'Leather Strap',
+        label = 'Turniquet i skinn',
         itemName = 'tourniquet_leather', -- Actual item name in inventory
         effectiveness = 75,
         maxDuration = 1400,          -- 23 minutes max
@@ -643,7 +643,7 @@ Config.TourniquetTypes = {
         description = 'Leather strap tourniquet - durable frontier solution'
     },
     ['cloth'] = {
-        label = 'Cloth Tourniquet',
+        label = 'Klut Tourniquet',
         itemName = 'tourniquet_cloth',   -- Actual item name in inventory
         effectiveness = 65,
         maxDuration = 1000,          -- 16 minutes max (stretches out)
@@ -654,7 +654,7 @@ Config.TourniquetTypes = {
         description = 'Cloth tourniquet - basic emergency bleeding control'
     },
     ['medical'] = {
-        label = 'Medical Tourniquet',
+        label = 'Medisinsk Tourniquet',
         itemName = 'tourniquet_medical', -- Actual item name in inventory
         effectiveness = 95,
         maxDuration = 1800,          -- 30 minutes max (professional grade)
@@ -672,7 +672,7 @@ Config.TourniquetTypes = {
 
 Config.MedicineTypes = {
     ['laudanum'] = {
-        label = 'Laudanum',
+        label = 'Laudanum medisin',
         itemName = 'medicine_laudanum',  -- Actual item name in inventory
         description = 'Opium-based painkiller - powerful but addictive',
         price = 35,                  -- $35 per bottle
@@ -684,7 +684,7 @@ Config.MedicineTypes = {
         addictionRisk = 15           -- 15% chance of dependency
     },
     ['morphine'] = {
-        label = 'Morphine Powder',
+        label = 'Medisinsk Morfin',
         itemName = 'medicine_morphine',  -- Actual item name in inventory
         description = 'Powerful opiate analgesic - strongest painkiller available',
         price = 50,                  -- $50 per dose
@@ -696,7 +696,7 @@ Config.MedicineTypes = {
         addictionRisk = 25           -- High addiction risk
     },
     ['whiskey'] = {
-        label = 'Medicinal Whiskey',
+        label = 'Medisinsk whisky',
         itemName = 'medicine_whiskey',   -- Actual item name in inventory
         description = 'Alcohol-based antiseptic and anesthetic - frontier medicine',
         price = 15,                  -- $15 per bottle
@@ -708,7 +708,7 @@ Config.MedicineTypes = {
         addictionRisk = 8            -- Moderate addiction risk
     },
     ['quinine'] = {
-        label = 'Quinine Powder',
+        label = 'Medisinsk kinin',
         itemName = 'medicine_quinine',   -- Actual item name in inventory
         description = 'Antimalarial and fever reducer - specialized treatment',
         price = 25,                  -- $25 per dose
@@ -727,7 +727,7 @@ Config.MedicineTypes = {
 
 Config.InjectionTypes = {
     ['adrenaline'] = {
-        label = 'Adrenaline Shot',
+        label = 'Adrenaline sprøyte',
         itemName = 'injection_adrenaline',  -- Actual item name in inventory
         description = 'Cardiac stimulant for emergency resuscitation - use with extreme caution',
         price = 75,                  -- $75 per injection (expensive/experimental)
@@ -740,7 +740,7 @@ Config.InjectionTypes = {
         overdoseRisk = 20            -- 20% chance of complications
     },
     ['cocaine'] = {
-        label = 'Cocaine Solution',
+        label = 'Kokain sprøyte',
         itemName = 'injection_cocaine',     -- Actual item name in inventory
         description = 'Local anesthetic for surgical procedures - numbs pain effectively',
         price = 40,                  -- $40 per injection
@@ -753,7 +753,7 @@ Config.InjectionTypes = {
         overdoseRisk = 15            -- Moderate overdose risk
     },
     ['strychnine'] = {
-        label = 'Strychnine (Micro)',
+        label = 'Strychnine sprøyte (Micro)',
         itemName = 'injection_strychnine',  -- Actual item name in inventory
         description = 'Stimulant for paralysis and respiratory failure - extremely dangerous',
         price = 60,                  -- $60 per injection (dangerous = expensive)
@@ -766,7 +766,7 @@ Config.InjectionTypes = {
         overdoseRisk = 35            -- High chance of fatal overdose
     },
     ['saline'] = {
-        label = 'Salt Water',
+        label = 'Salt Water(Saline)',
         itemName = 'injection_saline',      -- Actual item name in inventory
         description = 'Hydration and blood volume replacement - safe basic treatment',
         price = 10,                  -- $10 per injection (basic/safe)
@@ -797,7 +797,7 @@ Config.DoctorsBagTools = {
         medicOnly = true                    -- Only medics can use
     },
     ['stethoscope'] = {
-        label = 'Stethoscope',
+        label = 'Stetoskop',
         itemName = 'stethoscope',
         action = 'check_heart_lungs',
         description = 'Check heart and lung sounds',
@@ -815,7 +815,7 @@ Config.DoctorsBagTools = {
         medicOnly = true
     },
     ['field_surgery_kit'] = {
-        label = 'Field Surgery Kit',
+        label = 'Førstehjelp',
         itemName = 'field_surgery_kit',
         action = 'emergency_surgery',
         description = 'Emergency surgical tools for field operations',
